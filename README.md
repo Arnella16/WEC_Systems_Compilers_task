@@ -1,4 +1,4 @@
-![image](https://github.com/user-attachments/assets/f8892b12-87ef-4bf7-8b34-54ce38dcd541)# WEC_Systems_Compilers_task
+# WEC_Systems_Compilers_task
 
 ### Explanation
 #### Lexer:
