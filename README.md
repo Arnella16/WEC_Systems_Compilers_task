@@ -1,4 +1,4 @@
-# WEC_Systems_Compilers_task
+![image](https://github.com/user-attachments/assets/f8892b12-87ef-4bf7-8b34-54ce38dcd541)# WEC_Systems_Compilers_task
 
 ### Explanation
 #### Lexer:
@@ -28,6 +28,7 @@ hyphen					[-]
 
 ```
 Each time a new token is parsed it is added into the symbol table using the insertSymbolTable() function and the token parsed can be identified through an inbuilt string called yytext which contains a sequence of characters making up a single input token. 
+
 **Error Handling:** If an unrecognized character is found, it triggers an error and records it in the error table as a lexical error.
 
 #### Parser:
@@ -65,4 +66,31 @@ combos : COMMA HYPHEN combos
 
 ```
 After parsing the input string the final accepted string and the symbol table and the error table(if any errors are present) are printed.
-Parser identifies the syntax errors and stops parsing a particular line after an error has been identified through the inbuilt function yyerror whose parameters explain the type of error and it automatically terminated after detecting an error. 
+Parser identifies the syntax errors and stops parsing a particular line after an error has been identified through the inbuilt function yyerror whose parameters explain the type of error and it automatically terminated after detecting an error.
+
+#### Bonus task:
+1. Parsing table
+
+
+- **Valid Input:**
+For the following input:
+```
+Teja--,--,- hello-,---,-- "hello hue teja",---,-- Hue.
+```
+
+Output:
+![image](https://github.com/user-attachments/assets/d4151aab-1d1e-4358-8f58-5f17e5be0cd5)
+
+
+
+- **Invalid Input:**
+For the following input:
+```
+Teja--,--,- hello-,---,-- "hello hue teja",,---,-- Hue.
+```
+
+Output:
+![image](https://github.com/user-attachments/assets/677d761b-b842-41c8-9c43-0b4a5ff3410b)
+
+
+
