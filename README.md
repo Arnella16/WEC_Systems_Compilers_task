@@ -92,5 +92,20 @@ Teja--,--,- hello-,---,-- "hello hue teja",,---,-- Hue.
 Output:
 ![image](https://github.com/user-attachments/assets/677d761b-b842-41c8-9c43-0b4a5ff3410b)
 
+Production rules used for parsing table:
 
+1. stmt -> START_WORD mid_sentence STOP
+2. mid_sentence -> words mid_sentence
+3. mid_sentence -> punctuations words mid_sentence
+4. mid_sentence -> epsilon
+5. words -> START_WORD 
+6. words -> WORD 
+7. words -> QUOTATION  	     
+8. punctuations -> COMMA
+9. punctuations -> HYPHEN
+10. punctuations -> combos
+11. combos -> COMMA HYPHEN combos
+12. combos -> HYPHEN combos
+13. combos -> epsilon      
 
+- '$' is used to represent the start symbol
