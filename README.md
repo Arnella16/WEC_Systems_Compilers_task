@@ -1,4 +1,4 @@
-# WEC_Systems_Compilers_task
+![image](https://github.com/user-attachments/assets/39f6c482-43de-4ed8-992c-ef17575b5fc1)# WEC_Systems_Compilers_task
 
 ### Explanation
 #### Lexer:
@@ -70,7 +70,9 @@ Parser identifies the syntax errors and stops parsing a particular line after an
 
 #### Bonus task:
 1. Parsing table
+2. Abstract Syntax Tree
 
+NULL productions don't get printed in the Level-Order Traversal.
 
 - **Valid Input:**
 For the following input:
@@ -79,7 +81,8 @@ Teja--,--,- hello-,---,-- "hello hue teja",---,-- Hue.
 ```
 
 Output:
-![image](https://github.com/user-attachments/assets/d4151aab-1d1e-4358-8f58-5f17e5be0cd5)
+![image](https://github.com/user-attachments/assets/21f75347-e696-4477-8110-a6bb5f2759a7)
+
 
 
 
@@ -90,7 +93,8 @@ Teja--,--,- hello-,---,-- "hello hue teja",,---,-- Hue.
 ```
 
 Output:
-![image](https://github.com/user-attachments/assets/677d761b-b842-41c8-9c43-0b4a5ff3410b)
+![image](https://github.com/user-attachments/assets/72ae210b-0be6-4803-a7d4-72d9451f6aaa)
+
 
 Production rules used for parsing table:
 
@@ -109,3 +113,6 @@ Production rules used for parsing table:
 13. combos -> epsilon      
 
 - '$' is used to represent the start symbol
+
+
+
