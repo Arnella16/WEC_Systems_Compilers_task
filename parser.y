@@ -10,32 +10,176 @@
 	extern char *yytext;
 	extern char final_string[1000];
     	int rows=6, cols=8;
-	int flag2=0, flag_error=0;
+	int flag2=0, flag_error=0, counter=1;
+	struct node* mknode(struct node *child1, struct node *child2, struct node *child3, char *token);
+	
+	struct node *head;
+    	struct node { 
+		struct node *child1; 
+		struct node *child2;
+		struct node *child3; 
+		char *token; 
+    	};
+    	
+    	struct queueNode {
+    		struct node *treeNode;
+    		struct queueNode *next;
+	};
+
+	struct queue {
+    		struct queueNode *front;
+    		struct queueNode *rear;
+	};
+
+	void enqueue(struct queue *q, struct node *treeNode) {
+    		struct queueNode *newNode = (struct queueNode *)malloc(sizeof(struct queueNode));
+    		newNode->treeNode = treeNode;
+    		newNode->next = NULL;
+    		if (q->rear == NULL) {
+        		q->front = q->rear = newNode;
+    		} else {
+       	 	q->rear->next = newNode;
+        	q->rear = newNode;
+    	}
+	}
+
+	struct node *dequeue(struct queue *q) {
+    		if (q->front == NULL) {
+       	 		return NULL;
+    		}
+    		struct queueNode *temp = q->front;
+    		struct node *treeNode = temp->treeNode;
+    		q->front = q->front->next;
+    		if (q->front == NULL) {
+        		q->rear = NULL;
+    		}
+    		free(temp);
+    		return treeNode;
+	}
+
+	int isEmpty(struct queue *q) {
+    		return q->front == NULL;
+	}
+
+	void levelOrderTraversal(struct node *root) {
+    		if (root == NULL) return;
+
+		struct queue q;
+		q.front = q.rear = NULL;
+
+    		enqueue(&q, root);
+    		int level = 1;  // Keep track of the level
+
+    		while (!isEmpty(&q)) {
+        		int levelSize = 0;  // Number of nodes at the current level
+        		struct queueNode *current = q.front;
+
+        		// Count nodes at the current level
+        		while (current != NULL) {
+            			levelSize++;
+            			current = current->next;
+        		}
+	
+        		printf("Level - %d : ", level);
+        		for (int i = 0; i < levelSize; i++) {
+        		    	struct node *currentNode = dequeue(&q);
+        		    	printf("%s ", currentNode->token);
+		
+		            	// Enqueue child nodes	
+		            	if (currentNode->child1 != NULL) {
+        			    enqueue(&q, currentNode->child1);
+       			    	}
+        	    	    	if (currentNode->child2 != NULL) {
+        	        	    enqueue(&q, currentNode->child2);
+        	    		}
+        	    		if (currentNode->child3 != NULL) {
+        	        		enqueue(&q, currentNode->child3);
+       		     		}
+        		}
+        		printf("\n");  // New line after each level
+        		level++;  // Move to the next level
+    		}
+	}
 %}
 
-%token WORD START_WORD STOP COMMA HYPHEN QUOTATION
+
+%union { 
+	struct var_name { 
+		char name[100]; 
+		struct node* nd;
+	} nd_obj; 
+} 
+
+%token <nd_obj> WORD START_WORD STOP COMMA HYPHEN QUOTATION
+%type <nd_obj> stmt mid_sentence words punctuations combos
 
 %%
 stmt : START_WORD mid_sentence STOP
+     {
+     	$1.nd = mknode(NULL, NULL, NULL, "START_WORD");
+     	$3.nd = mknode(NULL, NULL, NULL, "STOP");
+     	$$.nd = mknode($1.nd, $2.nd, $3.nd, "stmt");
+     	head = $$.nd;
+     }	
      ;  
      
 mid_sentence : words mid_sentence
+	     {
+    		$$.nd = mknode($1.nd, $2.nd, NULL, "mid_sentence");
+	     }
 	     | punctuations words mid_sentence
+	     {
+	     	$$.nd = mknode($1.nd, $2.nd, $3.nd, "mid_sentence");
+	     }
 	     |
+	     {
+	     	$$.nd = NULL; 
+	     }
 	     ;
 	     
 words : START_WORD 
+      {
+        $1.nd = mknode(NULL, NULL, NULL, "START_WORD");
+      	$$.nd = mknode($1.nd, NULL, NULL, "words");
+      }
       | WORD 
+      {
+      	$1.nd = mknode(NULL, NULL, NULL, "WORD");
+      	$$.nd = mknode($1.nd, NULL, NULL, "words");
+      }
       | QUOTATION
+      {
+      	$1.nd = mknode(NULL, NULL, NULL, "QUOTATION");
+      	$$.nd = mknode($1.nd, NULL, NULL, "words");
+      }
       ;	      
 	     	     
 punctuations : COMMA 
+	     {
+	     	$1.nd = mknode(NULL, NULL, NULL, "COMMA"); 
+	     	$$.nd = mknode($1.nd, NULL, NULL, "punctuations");
+	     }
 	     | combos
+	     {
+	     	$$.nd = mknode($1.nd, NULL, NULL, "punctuations");
+	     }
 	     ;	     	     
 	    
 combos : COMMA HYPHEN combos
+       {
+       	 $1.nd = mknode(NULL, NULL, NULL, "COMMA");
+       	 $2.nd = mknode(NULL, NULL, NULL, "HYPHEN");
+       	 $$.nd = mknode($1.nd, $2.nd, $3.nd, "combos");
+       }
        | HYPHEN combos
+       {
+         $1.nd = mknode(NULL, NULL, NULL, "HYPHEN");
+       	 $$.nd = mknode($1.nd, $2.nd, NULL, "combos");
+       }
        |
+       {
+       	 $$.nd = NULL;
+       }
        ;
 %%
 
@@ -116,14 +260,25 @@ void parseTable(){
     	for (int i = 0; i < rows; i++) {
         	for (int j = 0; j < cols; j++) {
             		if (j == 0) {
-                		printf("  %-20s |", matrix[i][j]); // Left-align first column
+                		printf("  %-20s |", matrix[i][j]);
             		} else {
-                		printf("  %-20s |", matrix[i][j]); // Left-align subsequent columns
+                		printf("  %-20s |", matrix[i][j]);
             		}
         	}
         	printf("\n------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n");
     	}
 }  
+
+struct node* mknode(struct node *child1, struct node *child2, struct node *child3, char *token) {	
+	struct node *newnode = (struct node *)malloc(sizeof(struct node));
+	char *newstr = (char *)malloc(strlen(token)+1);
+	strcpy(newstr, token);
+	newnode->child1 = child1;
+	newnode->child2 = child2;
+	newnode->child3 = child3;
+	newnode->token = newstr;
+	return(newnode);
+}
 
 int main(){
 	yyin=fopen("input.txt", "r");
@@ -146,9 +301,13 @@ int main(){
 		printf("------------------------------------------\n");
 		printErrorTable();
 		printf("------------------------------------------\n\n\n");
+		printf("\nNo AST\n");
 	}
 	else{
 		printf("No errors\n\n\n");
+		printf("\nLevel Order Traversal of the Parse Tree:\n");
+    		levelOrderTraversal(head);
+    		printf("\n");
 	}
 	parseTable();
 	return 0;
